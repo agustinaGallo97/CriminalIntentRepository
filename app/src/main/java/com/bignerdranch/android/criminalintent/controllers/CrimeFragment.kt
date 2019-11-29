@@ -13,7 +13,7 @@ import androidx.fragment.app.Fragment
 import com.bignerdranch.android.criminalintent.R
 import com.bignerdranch.android.criminalintent.models.Crime
 
-class CrimeFragment : Fragment() {
+class CrimeFragment : Fragment(R.layout.fragment_crime) {
     private lateinit var crime: Crime
     private lateinit var titleField: EditText
     private lateinit var dateButton: Button
@@ -24,12 +24,20 @@ class CrimeFragment : Fragment() {
         crime = Crime()
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return bindViews(inflater, container)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        titleField = view.findViewById(R.id.crimeTitle) as EditText
+        dateButton = view.findViewById(R.id.crimeDate) as Button
+        solvedCheckBox = view.findViewById(R.id.crimeSolved) as CheckBox
+
+        setupDateButton()
+    }
+
+    private fun setupDateButton() {
+        dateButton.apply {
+            text = crime.date.toString()
+            isEnabled = false
+        }
     }
 
     override fun onStart() {
@@ -50,20 +58,5 @@ class CrimeFragment : Fragment() {
         solvedCheckBox.apply {
             setOnCheckedChangeListener { _, isChecked -> crime.isSolved = isChecked }
         }
-    }
-
-    private fun bindViews(inflater: LayoutInflater, container: ViewGroup?): View {
-        val view = inflater.inflate(R.layout.fragment_crime, container, false)
-
-        titleField = view.findViewById(R.id.crimeTitle) as EditText
-        dateButton = view.findViewById(R.id.crimeDate) as Button
-        solvedCheckBox = view.findViewById(R.id.crimeSolved) as CheckBox
-
-        dateButton.apply {
-            text = crime.date.toString()
-            isEnabled = false
-        }
-
-        return view
     }
 }
