@@ -10,7 +10,7 @@
 .externalNativeBuild
 
 .idea
-!.idea/Project.xml
+!.idea/codeStyles/Project.xml
 
 build
 /reports
