@@ -1,0 +1,6 @@
+FinalNewline - [Element(kotlin.FILE)] at /home/toshiba/Desktop/CriminalIntent-Repo/CriminalIntentRepository/app/src/main/java/com/bignerdranch/android/criminalintent/models/Crime.kt:1:1 - Signature=
+NoWildcardImports - [Element(IMPORT_DIRECTIVE)] at /home/toshiba/Desktop/CriminalIntent-Repo/CriminalIntentRepository/app/src/main/java/com/bignerdranch/android/criminalintent/models/Crime.kt:3:1 - Signature=
+NoBlankLineBeforeRbrace - [PsiWhiteSpace] at /home/toshiba/Desktop/CriminalIntent-Repo/CriminalIntentRepository/app/src/main/java/com/bignerdranch/android/criminalintent/MainActivity.kt:17:10 - Signature=
+NoBlankLineBeforeRbrace - [PsiWhiteSpace] at /home/toshiba/Desktop/CriminalIntent-Repo/CriminalIntentRepository/app/src/main/java/com/bignerdranch/android/criminalintent/controllers/CrimeFragment.kt:75:1 - Signature=
+CommentSpacing - [PsiComment(EOL_COMMENT)] at /home/toshiba/Desktop/CriminalIntent-Repo/CriminalIntentRepository/app/src/main/java/com/bignerdranch/android/criminalintent/controllers/CrimeFragment.kt:51:17 - Signature=
+CommentSpacing - [PsiComment(EOL_COMMENT)] at /home/toshiba/Desktop/CriminalIntent-Repo/CriminalIntentRepository/app/src/main/java/com/bignerdranch/android/criminalintent/controllers/CrimeFragment.kt:60:18 - Signature=

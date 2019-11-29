@@ -1,0 +1,5 @@
+--generate-config
+--config
+/home/toshiba/Desktop/CriminalIntent-Repo/CriminalIntentRepository/config/detekt/detekt.yml
+--input
+/home/toshiba/Desktop/CriminalIntent-Repo/CriminalIntentRepository/app/src/main/java/com/bignerdranch/android/criminalintent/models/Crime.kt,/home/toshiba/Desktop/CriminalIntent-Repo/CriminalIntentRepository/app/src/main/java/com/bignerdranch/android/criminalintent/MainActivity.kt,/home/toshiba/Desktop/CriminalIntent-Repo/CriminalIntentRepository/app/src/main/java/com/bignerdranch/android/criminalintent/controllers/CrimeFragment.kt
