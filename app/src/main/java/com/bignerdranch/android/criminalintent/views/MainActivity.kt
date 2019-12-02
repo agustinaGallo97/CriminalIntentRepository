@@ -3,7 +3,7 @@ package com.bignerdranch.android.criminalintent.views
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.bignerdranch.android.criminalintent.R
-import com.bignerdranch.android.criminalintent.controllers.CrimeFragment
+import com.bignerdranch.android.criminalintent.controllers.CrimeListFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -13,7 +13,7 @@ class MainActivity : AppCompatActivity() {
 
         val currentFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
         if (currentFragment == null) {
-            val fragment = CrimeFragment()
+            val fragment = CrimeListFragment.newInstance()
             supportFragmentManager.beginTransaction().add(R.id.fragmentContainer, fragment).commit()
         }
     }
