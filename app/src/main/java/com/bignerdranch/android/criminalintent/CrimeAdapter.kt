@@ -22,7 +22,6 @@ class CrimeAdapter(var crimes: List<Crime>) : RecyclerView.Adapter<CrimeAdapter.
 
   override fun getItemCount(): Int = crimes.size
 
-
   inner class CrimeHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListener {
     private lateinit var crime: Crime
 
@@ -43,5 +42,4 @@ class CrimeAdapter(var crimes: List<Crime>) : RecyclerView.Adapter<CrimeAdapter.
       Toast.makeText(itemView.context, "${crime.title} pressed!", Toast.LENGTH_SHORT).show()
     }
   }
-
 }
