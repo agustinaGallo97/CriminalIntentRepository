@@ -11,6 +11,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bignerdranch.android.criminalintent.models.Crime
 
 class CrimeAdapter(var crimes: List<Crime>) : RecyclerView.Adapter<CrimeAdapter.CrimeHolder>() {
+  companion object {
+    const val DATE_FORMAT = "dd/MM/yyyy"
+  }
+
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CrimeHolder {
     val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item_crime, parent, false)
     return CrimeHolder(view)
@@ -31,7 +35,7 @@ class CrimeAdapter(var crimes: List<Crime>) : RecyclerView.Adapter<CrimeAdapter.
 
     fun bind(crime: Crime) {
       titleTextView.text = crime.title
-      dateTextView.text = DateFormat.format("dd/MM/yyyy", crime.date)
+      dateTextView.text = DateFormat.format(DATE_FORMAT, crime.date)
 
       with(itemView) {
         var text = context.getString(R.string.crime_title_pressed, crime.title)
