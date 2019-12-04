@@ -1,5 +1,6 @@
 package com.bignerdranch.android.criminalintent
 
+import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,7 +9,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bignerdranch.android.criminalintent.models.Crime
-import android.text.format.DateFormat
 
 class CrimeAdapter(var crimes: List<Crime>) : RecyclerView.Adapter<CrimeAdapter.CrimeHolder>() {
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CrimeHolder {
@@ -31,7 +31,7 @@ class CrimeAdapter(var crimes: List<Crime>) : RecyclerView.Adapter<CrimeAdapter.
 
     fun bind(crime: Crime) {
       titleTextView.text = crime.title
-      dateTextView.text = crime.date.toString()
+      dateTextView.text = DateFormat.format("dd/MM/yyyy", crime.date)
 
       with(itemView) {
         var text = context.getString(R.string.crime_title_pressed, crime.title)
