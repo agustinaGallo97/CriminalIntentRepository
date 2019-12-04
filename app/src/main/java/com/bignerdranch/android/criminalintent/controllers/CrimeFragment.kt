@@ -10,6 +10,7 @@ import android.widget.EditText
 import androidx.fragment.app.Fragment
 import com.bignerdranch.android.criminalintent.R
 import com.bignerdranch.android.criminalintent.models.Crime
+import com.bignerdranch.android.criminalintent.views.utils.BaseTextWatcher
 
 class CrimeFragment : Fragment(R.layout.fragment_crime) {
   private lateinit var crime: Crime
@@ -41,11 +42,7 @@ class CrimeFragment : Fragment(R.layout.fragment_crime) {
   override fun onStart() {
     super.onStart()
 
-    val titleWatcher = object : TextWatcher {
-      override fun afterTextChanged(s: Editable?) {}
-
-      override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
+    val titleWatcher = object : BaseTextWatcher {
       override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
         crime.title = s.toString()
       }
