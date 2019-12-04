@@ -1,20 +1,20 @@
 package com.bignerdranch.android.criminalintent
 
 import android.text.format.DateFormat
+import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bignerdranch.android.criminalintent.models.Crime
+import com.bignerdranch.android.criminalintent.views.utils.context
+import java.text.SimpleDateFormat
 
 class CrimeAdapter(var crimes: List<Crime>) : RecyclerView.Adapter<CrimeAdapter.CrimeHolder>() {
-  companion object {
-    const val DATE_FORMAT = "dd/MM/yyyy"
-  }
-
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CrimeHolder {
     val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item_crime, parent, false)
     return CrimeHolder(view)
@@ -35,15 +35,13 @@ class CrimeAdapter(var crimes: List<Crime>) : RecyclerView.Adapter<CrimeAdapter.
 
     fun bind(crime: Crime) {
       titleTextView.text = crime.title
-      dateTextView.text = DateFormat.format(DATE_FORMAT, crime.date)
-
-      with(itemView) {
-        var text = context.getString(R.string.crime_title_pressed, crime.title)
-        setOnClickListener {
-          Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
-        }
+      dateTextView.text =
+        DateUtils.formatDateTime(context, crime.date.time, DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_YEAR)
+      itemView.setOnClickListener {
+        val text = context.getString(R.string.crime_title_pressed, crime.title)
+        Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
       }
-      solvedImageView.visibility = if (crime.isSolved) View.VISIBLE else View.GONE
+      solvedImageView.isVisible = crime.isSolved
     }
   }
 }
