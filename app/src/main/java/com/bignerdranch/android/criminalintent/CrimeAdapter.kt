@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bignerdranch.android.criminalintent.models.Crime
 
 class CrimeAdapter(var crimes: List<Crime>) : RecyclerView.Adapter<CrimeAdapter.CrimeHolder>() {
-
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CrimeHolder {
     val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item_crime, parent, false)
     return CrimeHolder(view)
@@ -22,24 +21,20 @@ class CrimeAdapter(var crimes: List<Crime>) : RecyclerView.Adapter<CrimeAdapter.
 
   override fun getItemCount(): Int = crimes.size
 
-  inner class CrimeHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListener {
-    private lateinit var crime: Crime
+  inner class CrimeHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     private val titleTextView: TextView = itemView.findViewById(R.id.crimeTitle)
     private val dateTextView: TextView = itemView.findViewById(R.id.crimeDate)
 
-    init {
-      itemView.setOnClickListener(this)
-    }
-
     fun bind(crime: Crime) {
-      this.crime = crime
-      titleTextView.text = this.crime.title
-      dateTextView.text = this.crime.date.toString()
-    }
-
-    override fun onClick(v: View) {
-      Toast.makeText(itemView.context, "${crime.title} pressed!", Toast.LENGTH_SHORT).show()
+      titleTextView.text = crime.title
+      dateTextView.text = crime.date.toString()
+      with(itemView) {
+        var text = context.getString(R.string.crime_title_pressed, crime.title)
+        setOnClickListener {
+          Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
+        }
+      }
     }
   }
 }
