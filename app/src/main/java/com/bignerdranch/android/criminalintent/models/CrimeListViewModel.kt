@@ -3,7 +3,9 @@ package com.bignerdranch.android.criminalintent.models
 import androidx.lifecycle.ViewModel
 
 class CrimeListViewModel : ViewModel() {
-  val LIST_LENGHT = 100
+  companion object {
+    const val LIST_LENGHT = 100
+  }
 
   val crimes: MutableList<Crime> = mutableListOf()
 
