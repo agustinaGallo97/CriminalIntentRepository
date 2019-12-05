@@ -1,6 +1,5 @@
 package com.bignerdranch.android.criminalintent
 
-import android.text.format.DateFormat
 import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
@@ -12,7 +11,6 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bignerdranch.android.criminalintent.models.Crime
 import com.bignerdranch.android.criminalintent.views.utils.context
-import java.text.SimpleDateFormat
 
 class CrimeAdapter(var crimes: List<Crime>) : RecyclerView.Adapter<CrimeAdapter.CrimeHolder>() {
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CrimeHolder {
