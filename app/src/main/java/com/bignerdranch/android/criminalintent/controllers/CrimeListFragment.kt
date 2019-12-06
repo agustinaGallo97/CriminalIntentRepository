@@ -32,6 +32,10 @@ class CrimeListFragment : Fragment(R.layout.fragment_crime_list) {
     super.onViewCreated(view, savedInstanceState)
     setupCrimeData()
     setUpCrimeRecyclerView(view)
+
+    adapter = CrimeAdapter()
+      .apply { onCrimeSelectedListener = { crimeId -> router.openCrimeDetailsView(crimeId) } }
+    crimeRecyclerView.adapter = adapter
   }
 
   private fun setupCrimeData() {
@@ -52,8 +56,6 @@ class CrimeListFragment : Fragment(R.layout.fragment_crime_list) {
   }
 
   private fun updateUI(crimes: List<Crime>) {
-    adapter = CrimeAdapter(crimes)
-      .apply { onCrimeSelectedListener = { crimeId -> router.openCrimeDetailsView(crimeId) } }
-    crimeRecyclerView.adapter = adapter
+    adapter?.submitList(crimes)
   }
 }
