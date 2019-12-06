@@ -32,16 +32,23 @@ class CrimeListFragment : Fragment(R.layout.fragment_crime_list) {
     crimeListViewModel.crimeListLiveData.observe(
       viewLifecycleOwner,
       Observer { crimes ->
-        crimes?.let {
-          Log.i(TAG, "Got crimes ${crimes.size}")
-          updateUI(crimes)
-        }
+        crimesObserver(crimes)
       }
     )
+    setUpCrimeRecyclerView(view)
+  }
 
+  private fun setUpCrimeRecyclerView(view: View) {
     crimeRecyclerView = view.findViewById(R.id.crimeRecyclerView) as RecyclerView
     crimeRecyclerView.layoutManager = LinearLayoutManager(context)
     crimeRecyclerView.adapter = adapter
+  }
+
+  private fun crimesObserver(crimes: List<Crime>) {
+    crimes?.let {
+      Log.i(TAG, "Got crimes ${crimes.size}")
+      updateUI(crimes)
+    }
   }
 
   private fun updateUI(crimes: List<Crime>) {

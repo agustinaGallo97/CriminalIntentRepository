@@ -7,10 +7,9 @@ import com.bignerdranch.android.criminalintent.database.CrimeDatabase
 import com.bignerdranch.android.criminalintent.models.Crime
 import java.util.UUID
 
-private const val DATABASE_NAME = "crime-database"
-
 class CrimeRepository private constructor(context: Context) {
   companion object {
+    private const val DATABASE_NAME = "crime-database"
     private var INSTANCE: CrimeRepository? = null
 
     fun initialize(context: Context) {
