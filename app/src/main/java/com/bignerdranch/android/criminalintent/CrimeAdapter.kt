@@ -11,8 +11,11 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bignerdranch.android.criminalintent.models.Crime
 import com.bignerdranch.android.criminalintent.views.utils.context
+import java.util.UUID
 
-class CrimeAdapter(var crimes: List<Crime>) : RecyclerView.Adapter<CrimeAdapter.CrimeHolder>() {
+open class CrimeAdapter(var crimes: List<Crime>) : RecyclerView.Adapter<CrimeAdapter.CrimeHolder>() {
+  var onCrimeSelectedListener: ((UUID) -> Unit)? = null
+
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CrimeHolder {
     val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item_crime, parent, false)
     return CrimeHolder(view)
@@ -38,6 +41,7 @@ class CrimeAdapter(var crimes: List<Crime>) : RecyclerView.Adapter<CrimeAdapter.
       itemView.setOnClickListener {
         val text = context.getString(R.string.crime_title_pressed, crime.title)
         Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
+        onCrimeSelectedListener?.invoke(crime.id)
       }
       solvedImageView.isVisible = crime.isSolved
     }
