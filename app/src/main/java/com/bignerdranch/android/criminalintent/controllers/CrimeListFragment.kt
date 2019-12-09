@@ -23,7 +23,10 @@ class CrimeListFragment : Fragment(R.layout.fragment_crime_list) {
     get() = activity as Router
 
   private lateinit var crimeRecyclerView: RecyclerView
-  private var adapter: CrimeAdapter? = CrimeAdapter(emptyList())
+  private val adapter: CrimeAdapter = CrimeAdapter()
+    .apply {
+      onCrimeSelectedListener = { crimeId -> router.openCrimeDetailsView(crimeId) }
+    }
   private val crimeListViewModel: CrimeListViewModel by lazy {
     ViewModelProviders.of(this).get(CrimeListViewModel::class.java)
   }
@@ -32,10 +35,6 @@ class CrimeListFragment : Fragment(R.layout.fragment_crime_list) {
     super.onViewCreated(view, savedInstanceState)
     setupCrimeData()
     setUpCrimeRecyclerView(view)
-
-    adapter = CrimeAdapter()
-      .apply { onCrimeSelectedListener = { crimeId -> router.openCrimeDetailsView(crimeId) } }
-    crimeRecyclerView.adapter = adapter
   }
 
   private fun setupCrimeData() {
@@ -50,12 +49,10 @@ class CrimeListFragment : Fragment(R.layout.fragment_crime_list) {
   }
 
   private fun setUpCrimeRecyclerView(view: View) {
-    crimeRecyclerView = view.findViewById(R.id.crimeRecyclerView) as RecyclerView
+    crimeRecyclerView = view.findViewById<RecyclerView>(R.id.crimeRecyclerView)
     crimeRecyclerView.layoutManager = LinearLayoutManager(context)
     crimeRecyclerView.adapter = adapter
   }
 
-  private fun updateUI(crimes: List<Crime>) {
-    adapter?.submitList(crimes)
-  }
+  private fun updateUI(crimes: List<Crime>) = adapter.submitList(crimes)
 }

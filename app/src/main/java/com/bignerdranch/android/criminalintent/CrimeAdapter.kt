@@ -15,8 +15,7 @@ import com.bignerdranch.android.criminalintent.models.Crime
 import com.bignerdranch.android.criminalintent.views.utils.context
 import java.util.UUID
 
-open class CrimeAdapter(var crimes: List<Crime> = listOf()) : ListAdapter<Crime,
-    CrimeAdapter.CrimeHolder>(CrimeDiffItemCallBack()) {
+open class CrimeAdapter : ListAdapter<Crime, CrimeAdapter.CrimeHolder>(CrimeDiffItemCallBack()) {
   companion object {
     class CrimeDiffItemCallBack : DiffUtil.ItemCallback<Crime>() {
       override fun areItemsTheSame(oldItem: Crime, newItem: Crime): Boolean = oldItem.id == newItem.id
@@ -34,11 +33,9 @@ open class CrimeAdapter(var crimes: List<Crime> = listOf()) : ListAdapter<Crime,
   }
 
   override fun onBindViewHolder(holder: CrimeHolder, position: Int) {
-    val crime = crimes[position]
+    val crime = getItem(position)
     holder.bind(crime)
   }
-
-  override fun getItemCount(): Int = crimes.size
 
   inner class CrimeHolder(view: View) : RecyclerView.ViewHolder(view) {
 
