@@ -70,6 +70,7 @@ class CrimeFragment : Fragment(R.layout.fragment_crime), DatePickerFragment.Call
 
   override fun onStart() {
     super.onStart()
+
     val titleWatcher = object : BaseTextWatcher {
       override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
         crime.title = s.toString()
