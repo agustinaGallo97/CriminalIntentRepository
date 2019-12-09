@@ -6,6 +6,7 @@ import androidx.room.Room
 import com.bignerdranch.android.criminalintent.database.CrimeDatabase
 import com.bignerdranch.android.criminalintent.models.Crime
 import java.util.UUID
+import java.util.concurrent.Executors
 
 class CrimeRepository private constructor() {
   companion object {
@@ -25,8 +26,19 @@ class CrimeRepository private constructor() {
     Room.databaseBuilder(CriminalIntentApplication.context, CrimeDatabase::class.java, DATABASE_NAME).build()
 
   private val crimeDao = database.crimeDao()
+  private val executor = Executors.newSingleThreadExecutor()
 
   fun getCrimes(): LiveData<List<Crime>> = crimeDao.getCrimes()
 
   fun getCrime(id: UUID): LiveData<Crime?> = crimeDao.getCrime(id)
+
+  fun updateCrime(crime: Crime) =
+    executor.execute {
+      crimeDao.updateCrime(crime)
+    }
+
+  fun addCrime(crime: Crime) =
+    executor.execute {
+      crimeDao.addCrime(crime)
+    }
 }

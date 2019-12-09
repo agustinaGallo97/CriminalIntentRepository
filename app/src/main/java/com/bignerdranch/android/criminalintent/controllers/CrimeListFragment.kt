@@ -3,9 +3,6 @@ package com.bignerdranch.android.criminalintent.controllers
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -13,6 +10,8 @@ import com.bignerdranch.android.criminalintent.CrimeAdapter
 import com.bignerdranch.android.criminalintent.R
 import com.bignerdranch.android.criminalintent.models.Crime
 import com.bignerdranch.android.criminalintent.models.CrimeListViewModel
+import com.bignerdranch.android.criminalintent.views.utils.Router
+import com.bignerdranch.android.criminalintent.views.utils.observe
 import timber.log.Timber
 
 class CrimeListFragment : Fragment(R.layout.fragment_crime_list) {
@@ -20,9 +19,14 @@ class CrimeListFragment : Fragment(R.layout.fragment_crime_list) {
     fun newInstance(): CrimeListFragment = CrimeListFragment()
   }
 
-  private lateinit var crimeRecyclerView: RecyclerView
-  private var adapter: CrimeAdapter? = CrimeAdapter(emptyList())
+  private val router: Router
+    get() = activity as Router
 
+  private lateinit var crimeRecyclerView: RecyclerView
+  private val adapter: CrimeAdapter = CrimeAdapter()
+    .apply {
+      onCrimeSelectedListener = { crimeId -> router.openCrimeDetailsView(crimeId) }
+    }
   private val crimeListViewModel: CrimeListViewModel by lazy {
     ViewModelProviders.of(this).get(CrimeListViewModel::class.java)
   }
@@ -44,17 +48,11 @@ class CrimeListFragment : Fragment(R.layout.fragment_crime_list) {
     }
   }
 
-  inline fun <T> LiveData<T>.observe(owner: LifecycleOwner, crossinline callable: (T) -> Unit) =
-    observe(owner, Observer { callable.invoke(it) })
-
   private fun setUpCrimeRecyclerView(view: View) {
-    crimeRecyclerView = view.findViewById(R.id.crimeRecyclerView) as RecyclerView
+    crimeRecyclerView = view.findViewById<RecyclerView>(R.id.crimeRecyclerView)
     crimeRecyclerView.layoutManager = LinearLayoutManager(context)
     crimeRecyclerView.adapter = adapter
   }
 
-  private fun updateUI(crimes: List<Crime>) {
-    adapter = CrimeAdapter(crimes)
-    crimeRecyclerView.adapter = adapter
-  }
+  private fun updateUI(crimes: List<Crime>) = adapter.submitList(crimes)
 }
