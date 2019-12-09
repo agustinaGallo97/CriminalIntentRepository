@@ -30,7 +30,7 @@ class CrimeFragment : Fragment(R.layout.fragment_crime) {
   private lateinit var titleField: EditText
   private lateinit var dateButton: Button
   private lateinit var solvedCheckBox: CheckBox
-  
+
   private val crimeDeatilViewModel: CrimeDetailViewModel by lazy {
     ViewModelProviders.of(this).get(CrimeDetailViewModel::class.java)
   }
