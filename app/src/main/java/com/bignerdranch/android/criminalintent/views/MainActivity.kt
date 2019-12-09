@@ -17,13 +17,17 @@ class MainActivity : AppCompatActivity(), Router {
     val currentFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
     if (currentFragment == null) {
       val fragment = CrimeListFragment.newInstance()
-      supportFragmentManager.beginTransaction().add(R.id.fragmentContainer, fragment).commit()
+      supportFragmentManager
+        .beginTransaction()
+        .add(R.id.fragmentContainer, fragment).commit()
     }
   }
 
   override fun openCrimeDetailsView(crimeId: UUID) {
     val fragment = CrimeFragment.newInstance(crimeId)
-    supportFragmentManager.beginTransaction().replace(R.id.fragmentContainer, fragment)
-      .addToBackStack(null).commit()
+    supportFragmentManager
+      .beginTransaction().replace(R.id.fragmentContainer, fragment)
+      .addToBackStack(null)
+      .commit()
   }
 }
