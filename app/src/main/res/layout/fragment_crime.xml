@@ -34,7 +34,14 @@
         android:id="@+id/crimeDate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="Wed Nov 14 11:56 EST 2018"
+        tools:text="Select Date"
+        />
+
+    <Button
+        android:id="@+id/crimeTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Select Time"
         />
 
     <CheckBox
