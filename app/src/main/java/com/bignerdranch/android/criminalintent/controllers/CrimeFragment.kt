@@ -12,11 +12,14 @@ import com.bignerdranch.android.criminalintent.R
 import com.bignerdranch.android.criminalintent.models.Crime
 import com.bignerdranch.android.criminalintent.models.CrimeDetailViewModel
 import com.bignerdranch.android.criminalintent.views.utils.BaseTextWatcher
+import java.util.Date
 import java.util.UUID
 
-class CrimeFragment : Fragment(R.layout.fragment_crime) {
+class CrimeFragment : Fragment(R.layout.fragment_crime), DatePickerFragment.Callbacks {
   companion object {
     private const val ARG_CRIME_ID = "crime_id"
+    private const val DIALOG_DATE = "DialogDate"
+    private const val REQUEST_DATE = 0
 
     fun newInstance(crimeId: UUID): CrimeFragment {
       val args = Bundle().apply {
@@ -48,20 +51,11 @@ class CrimeFragment : Fragment(R.layout.fragment_crime) {
     dateButton = view.findViewById(R.id.crimeDate) as Button
     solvedCheckBox = view.findViewById(R.id.crimeSolved) as CheckBox
 
-    setupDateButton()
-
     crimeDeatilViewModel.crimeLiveData.observe(viewLifecycleOwner) { crime ->
       crime?.let {
         this.crime = crime
         updateUI()
       }
-    }
-  }
-
-  private fun setupDateButton() {
-    dateButton.apply {
-      text = crime.date.toString()
-      isEnabled = false
     }
   }
 
@@ -78,11 +72,23 @@ class CrimeFragment : Fragment(R.layout.fragment_crime) {
     solvedCheckBox.apply {
       setOnCheckedChangeListener { _, isChecked -> crime.isSolved = isChecked }
     }
+
+    dateButton.setOnClickListener() {
+      DatePickerFragment.newInstance(crime.date).apply {
+        setTargetFragment(this@CrimeFragment, REQUEST_DATE)
+        show(this@CrimeFragment.requireFragmentManager(), DIALOG_DATE)
+      }
+    }
   }
 
   override fun onStop() {
     super.onStop()
     crimeDeatilViewModel.saveCrime(crime)
+  }
+
+  override fun onDateSelected(date: Date) {
+    crime.date = date
+    updateUI()
   }
 
   private fun updateUI() {

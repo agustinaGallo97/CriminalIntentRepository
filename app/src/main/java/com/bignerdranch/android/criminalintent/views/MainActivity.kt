@@ -26,7 +26,8 @@ class MainActivity : AppCompatActivity(), Router {
   override fun openCrimeDetailsView(crimeId: UUID) {
     val fragment = CrimeFragment.newInstance(crimeId)
     supportFragmentManager
-      .beginTransaction().replace(R.id.fragmentContainer, fragment)
+      .beginTransaction()
+      .replace(R.id.fragmentContainer, fragment)
       .addToBackStack(null)
       .commit()
   }
