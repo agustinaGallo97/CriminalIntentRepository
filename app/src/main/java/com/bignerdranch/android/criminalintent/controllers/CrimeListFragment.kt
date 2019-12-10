@@ -16,6 +16,7 @@ import com.bignerdranch.android.criminalintent.models.Crime
 import com.bignerdranch.android.criminalintent.models.CrimeListViewModel
 import com.bignerdranch.android.criminalintent.views.utils.Router
 import com.bignerdranch.android.criminalintent.views.utils.observe
+import kotlinx.android.synthetic.main.fragment_crime_list.*
 import timber.log.Timber
 
 class CrimeListFragment : Fragment(R.layout.fragment_crime_list) {
@@ -51,7 +52,17 @@ class CrimeListFragment : Fragment(R.layout.fragment_crime_list) {
     ) { crimes ->
       crimes.let {
         Timber.d("Got crimes ${crimes.size}")
-        updateUI(crimes)
+        if (crimes.size == 0) {
+          emptyCrimeListAdvert.setVisibility(View.VISIBLE)
+          addCrimeButton.setVisibility(View.VISIBLE)
+          addCrimeButton.setOnClickListener { v ->
+            addNewCrime()
+          }
+        } else {
+          emptyCrimeListAdvert.setVisibility(View.GONE)
+          addCrimeButton.setVisibility(View.GONE)
+          updateUI(crimes)
+        }
       }
     }
   }
@@ -63,6 +74,7 @@ class CrimeListFragment : Fragment(R.layout.fragment_crime_list) {
   }
 
   private fun updateUI(crimes: List<Crime>) = adapter.submitList(crimes)
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setHasOptionsMenu(true)
@@ -76,12 +88,16 @@ class CrimeListFragment : Fragment(R.layout.fragment_crime_list) {
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     return when (item.itemId) {
       R.id.newCrime -> {
-        val crime = Crime()
-        crimeListViewModel.addCrime(crime)
-        router.openCrimeDetailsView(crime.id)
+        addNewCrime()
         true
       }
       else -> return super.onOptionsItemSelected(item)
     }
+  }
+
+  private fun addNewCrime() {
+    val crime = Crime()
+    crimeListViewModel.addCrime(crime)
+    router.openCrimeDetailsView(crime.id)
   }
 }
