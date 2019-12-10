@@ -52,18 +52,22 @@ class CrimeListFragment : Fragment(R.layout.fragment_crime_list) {
     ) { crimes ->
       crimes.let {
         Timber.d("Got crimes ${crimes.size}")
-        if (crimes.size == 0) {
-          emptyCrimeListAdvert.setVisibility(View.VISIBLE)
-          addCrimeButton.setVisibility(View.VISIBLE)
-          addCrimeButton.setOnClickListener { v ->
-            addNewCrime()
-          }
-        } else {
-          emptyCrimeListAdvert.setVisibility(View.GONE)
-          addCrimeButton.setVisibility(View.GONE)
-          updateUI(crimes)
-        }
+        if (crimes.size == 0) setEmptyListView() else setListView(crimes)
       }
+    }
+  }
+
+  private fun setListView(crimes: List<Crime>) {
+    emptyCrimeListAdvert.setVisibility(View.GONE)
+    addCrimeButton.setVisibility(View.GONE)
+    updateUI(crimes)
+  }
+
+  private fun setEmptyListView() {
+    emptyCrimeListAdvert.setVisibility(View.VISIBLE)
+    addCrimeButton.setVisibility(View.VISIBLE)
+    addCrimeButton.setOnClickListener { v ->
+      addNewCrime()
     }
   }
 
@@ -74,7 +78,6 @@ class CrimeListFragment : Fragment(R.layout.fragment_crime_list) {
   }
 
   private fun updateUI(crimes: List<Crime>) = adapter.submitList(crimes)
-
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
