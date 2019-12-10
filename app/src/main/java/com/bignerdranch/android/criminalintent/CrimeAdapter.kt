@@ -6,14 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bignerdranch.android.criminalintent.models.Crime
 import com.bignerdranch.android.criminalintent.views.utils.context
-import java.util.UUID
 
 open class CrimeAdapter : ListAdapter<Crime, CrimeAdapter.CrimeHolder>(CrimeDiffItemCallBack()) {
   companion object {
@@ -25,7 +23,7 @@ open class CrimeAdapter : ListAdapter<Crime, CrimeAdapter.CrimeHolder>(CrimeDiff
     }
   }
 
-  var onCrimeSelectedListener: ((UUID) -> Unit)? = null
+  var onCrimeSelectedListener: ((Crime) -> Unit)? = null
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CrimeHolder {
     val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item_crime, parent, false)
@@ -48,9 +46,7 @@ open class CrimeAdapter : ListAdapter<Crime, CrimeAdapter.CrimeHolder>(CrimeDiff
       dateTextView.text =
         DateUtils.formatDateTime(context, crime.date.time, DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_YEAR)
       itemView.setOnClickListener {
-        val text = context.getString(R.string.crime_title_pressed, crime.title)
-        Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
-        onCrimeSelectedListener?.invoke(crime.id)
+        onCrimeSelectedListener?.invoke(crime)
       }
       solvedImageView.isVisible = crime.isSolved
     }
