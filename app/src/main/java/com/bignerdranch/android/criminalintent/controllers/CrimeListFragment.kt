@@ -2,6 +2,7 @@ package com.bignerdranch.android.criminalintent.controllers
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -11,6 +12,7 @@ import com.bignerdranch.android.criminalintent.R
 import com.bignerdranch.android.criminalintent.models.Crime
 import com.bignerdranch.android.criminalintent.models.CrimeListViewModel
 import com.bignerdranch.android.criminalintent.views.utils.Router
+import com.bignerdranch.android.criminalintent.views.utils.context
 import com.bignerdranch.android.criminalintent.views.utils.observe
 import timber.log.Timber
 
@@ -25,7 +27,11 @@ class CrimeListFragment : Fragment(R.layout.fragment_crime_list) {
   private lateinit var crimeRecyclerView: RecyclerView
   private val adapter: CrimeAdapter = CrimeAdapter()
     .apply {
-      onCrimeSelectedListener = { crimeId -> router.openCrimeDetailsView(crimeId) }
+      onCrimeSelectedListener = { crime ->
+        val text = context?.getString(R.string.crime_title_pressed, crime.title)
+        Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
+        router.openCrimeDetailsView(crime.id)
+      }
     }
   private val crimeListViewModel: CrimeListViewModel by lazy {
     ViewModelProviders.of(this).get(CrimeListViewModel::class.java)
