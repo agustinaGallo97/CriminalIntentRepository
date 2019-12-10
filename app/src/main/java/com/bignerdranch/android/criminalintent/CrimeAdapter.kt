@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bignerdranch.android.criminalintent.models.Crime
 import com.bignerdranch.android.criminalintent.views.utils.context
 
-open class CrimeAdapter : ListAdapter<Crime, CrimeAdapter.CrimeHolder>(CrimeDiffItemCallBack()) {
+ class CrimeAdapter : ListAdapter<Crime, CrimeAdapter.CrimeHolder>(CrimeDiffItemCallBack()) {
   companion object {
     class CrimeDiffItemCallBack : DiffUtil.ItemCallback<Crime>() {
       override fun areItemsTheSame(oldItem: Crime, newItem: Crime): Boolean = oldItem.id == newItem.id
@@ -36,7 +36,6 @@ open class CrimeAdapter : ListAdapter<Crime, CrimeAdapter.CrimeHolder>(CrimeDiff
   }
 
   inner class CrimeHolder(view: View) : RecyclerView.ViewHolder(view) {
-
     private val titleTextView: TextView = itemView.findViewById(R.id.crimeTitle)
     private val dateTextView: TextView = itemView.findViewById(R.id.crimeDate)
     private val solvedImageView: ImageView = itemView.findViewById(R.id.crimeSolved)

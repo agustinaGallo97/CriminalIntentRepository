@@ -1,6 +1,9 @@
 package com.bignerdranch.android.criminalintent.controllers
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -12,7 +15,6 @@ import com.bignerdranch.android.criminalintent.R
 import com.bignerdranch.android.criminalintent.models.Crime
 import com.bignerdranch.android.criminalintent.models.CrimeListViewModel
 import com.bignerdranch.android.criminalintent.views.utils.Router
-import com.bignerdranch.android.criminalintent.views.utils.context
 import com.bignerdranch.android.criminalintent.views.utils.observe
 import timber.log.Timber
 
@@ -55,10 +57,31 @@ class CrimeListFragment : Fragment(R.layout.fragment_crime_list) {
   }
 
   private fun setUpCrimeRecyclerView(view: View) {
-    crimeRecyclerView = view.findViewById<RecyclerView>(R.id.crimeRecyclerView)
+    crimeRecyclerView = view.findViewById(R.id.crimeRecyclerView)
     crimeRecyclerView.layoutManager = LinearLayoutManager(context)
     crimeRecyclerView.adapter = adapter
   }
 
   private fun updateUI(crimes: List<Crime>) = adapter.submitList(crimes)
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setHasOptionsMenu(true)
+  }
+
+  override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+    super.onCreateOptionsMenu(menu, inflater)
+    inflater.inflate(R.menu.fragment_crime_list, menu)
+  }
+
+  override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    return when (item.itemId) {
+      R.id.newCrime -> {
+        val crime = Crime()
+        crimeListViewModel.addCrime(crime)
+        router.openCrimeDetailsView(crime.id)
+        true
+      }
+      else -> return super.onOptionsItemSelected(item)
+    }
+  }
 }
