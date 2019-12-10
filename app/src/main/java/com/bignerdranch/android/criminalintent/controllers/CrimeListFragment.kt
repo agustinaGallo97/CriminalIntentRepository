@@ -75,6 +75,7 @@ class CrimeListFragment : Fragment(R.layout.fragment_crime_list) {
 
   private fun updateUI(crimes: List<Crime>) = adapter.submitList(crimes)
 
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setHasOptionsMenu(true)
