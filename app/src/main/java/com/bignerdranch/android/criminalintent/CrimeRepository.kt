@@ -24,9 +24,10 @@ class CrimeRepository private constructor() {
   }
 
   private val database: CrimeDatabase =
-    Room.databaseBuilder(CriminalIntentApplication.context, CrimeDatabase::class.java, DATABASE_NAME).addMigrations(
-      migration_1_2
-    ).build()
+    Room.databaseBuilder(CriminalIntentApplication.context, CrimeDatabase::class.java, DATABASE_NAME)
+      .addMigrations(
+        migration_1_2
+      ).build()
 
   private val crimeDao = database.crimeDao()
   private val executor = Executors.newSingleThreadExecutor()

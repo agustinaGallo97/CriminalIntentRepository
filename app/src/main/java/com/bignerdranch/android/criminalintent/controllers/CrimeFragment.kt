@@ -19,12 +19,14 @@ import com.bignerdranch.android.criminalintent.models.Crime
 import com.bignerdranch.android.criminalintent.models.CrimeDetailViewModel
 import com.bignerdranch.android.criminalintent.views.utils.BaseTextWatcher
 import android.text.format.DateFormat
+import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.UUID
 
 class CrimeFragment : Fragment(R.layout.fragment_crime), DatePickerFragment.Callbacks, TimePickerFragment.Callbacks {
   companion object {
+    private const val TYPE_INTENT = "text/plain"
     private const val ARG_CRIME_ID = "crime_id"
     private const val DIALOG_DATE = "DialogDate"
     private const val REQUEST_DATE = 0
@@ -52,6 +54,7 @@ class CrimeFragment : Fragment(R.layout.fragment_crime), DatePickerFragment.Call
   private lateinit var solvedCheckBox: CheckBox
   private lateinit var reportButton: Button
   private lateinit var suspectButton: Button
+  private lateinit var callSuspectButton: Button
 
   private val crimeDeatilViewModel: CrimeDetailViewModel by lazy {
     ViewModelProviders.of(this).get(CrimeDetailViewModel::class.java)
@@ -79,10 +82,11 @@ class CrimeFragment : Fragment(R.layout.fragment_crime), DatePickerFragment.Call
   private fun setUpVars(view: View) {
     titleField = view.findViewById(R.id.crimeTitle) as EditText
     dateButton = view.findViewById(R.id.crimeDate) as Button
-    timeButton = view.findViewById(R.id.crimeTime)
+    timeButton = view.findViewById(R.id.crimeTime) as Button
     solvedCheckBox = view.findViewById(R.id.crimeSolved) as CheckBox
     reportButton = view.findViewById(R.id.crimeReport) as Button
     suspectButton = view.findViewById(R.id.crimeSuspect) as Button
+    callSuspectButton = view.findViewById(R.id.callSuspect) as Button
   }
 
   override fun onStart() {
@@ -116,7 +120,7 @@ class CrimeFragment : Fragment(R.layout.fragment_crime), DatePickerFragment.Call
 
     reportButton.setOnClickListener {
       Intent(Intent.ACTION_SEND).apply {
-        type = "text/plain"
+        type = TYPE_INTENT
         putExtra(Intent.EXTRA_TEXT, getCrimeReport())
         putExtra(Intent.EXTRA_SUBJECT, getString(R.string.crime_report_subject))
       }.also { intent ->
@@ -134,6 +138,10 @@ class CrimeFragment : Fragment(R.layout.fragment_crime), DatePickerFragment.Call
         packageManager.resolveActivity(pickContactIntent, PackageManager.MATCH_DEFAULT_ONLY)
       if (resolvedActivity == null) isEnabled = false
     }
+
+//    callSuspectButton.apply {
+//      val callContactIntent = Intent(Intent.ACTION_DIAL, ContactsContract.CommonDataKinds.Phone)
+//    }
   }
 
   override fun onStop() {
@@ -159,7 +167,9 @@ class CrimeFragment : Fragment(R.layout.fragment_crime), DatePickerFragment.Call
       isChecked = crime.isSolved
       jumpDrawablesToCurrentState()
     }
-    if (crime.suspect.isNotEmpty()) suspectButton.text = crime.suspect
+    if (crime.suspect.isNotEmpty()) {
+      suspectButton.text = crime.suspect
+    }
   }
 
   private fun getCrimeReport(): String {
