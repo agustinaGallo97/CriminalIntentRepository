@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.room.Room
 import com.bignerdranch.android.criminalintent.database.CrimeDatabase
+import com.bignerdranch.android.criminalintent.database.migration_1_2
 import com.bignerdranch.android.criminalintent.models.Crime
 import java.util.UUID
 import java.util.concurrent.Executors
@@ -23,7 +24,9 @@ class CrimeRepository private constructor() {
   }
 
   private val database: CrimeDatabase =
-    Room.databaseBuilder(CriminalIntentApplication.context, CrimeDatabase::class.java, DATABASE_NAME).build()
+    Room.databaseBuilder(CriminalIntentApplication.context, CrimeDatabase::class.java, DATABASE_NAME).addMigrations(
+      migration_1_2
+    ).build()
 
   private val crimeDao = database.crimeDao()
   private val executor = Executors.newSingleThreadExecutor()
