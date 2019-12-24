@@ -52,7 +52,7 @@ class CrimeListFragment : Fragment(R.layout.fragment_crime_list) {
     ) { crimes ->
       crimes.let {
         Timber.d("Got crimes ${crimes.size}")
-        if (crimes.size == 0) setEmptyListView() else setListView(crimes)
+        if (crimes.isEmpty()) setEmptyListView() else setListView(crimes)
       }
     }
   }
