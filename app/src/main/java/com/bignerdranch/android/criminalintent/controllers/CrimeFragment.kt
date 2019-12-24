@@ -19,7 +19,6 @@ import com.bignerdranch.android.criminalintent.models.Crime
 import com.bignerdranch.android.criminalintent.models.CrimeDetailViewModel
 import com.bignerdranch.android.criminalintent.views.utils.BaseTextWatcher
 import android.text.format.DateFormat
-import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.UUID
