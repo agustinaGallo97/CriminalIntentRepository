@@ -14,7 +14,6 @@ import android.widget.EditText
 import androidx.fragment.app.Fragment
 import com.bignerdranch.android.criminalintent.views.utils.observe
 import androidx.lifecycle.ViewModelProviders
-import com.bignerdranch.android.criminalintent.R
 import com.bignerdranch.android.criminalintent.models.Crime
 import com.bignerdranch.android.criminalintent.models.CrimeDetailViewModel
 import com.bignerdranch.android.criminalintent.views.utils.BaseTextWatcher
@@ -22,6 +21,8 @@ import android.text.format.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.UUID
+import android.widget.Toast
+import com.bignerdranch.android.criminalintent.R
 
 class CrimeFragment : Fragment(R.layout.fragment_crime), DatePickerFragment.Callbacks, TimePickerFragment.Callbacks {
   companion object {
@@ -138,9 +139,11 @@ class CrimeFragment : Fragment(R.layout.fragment_crime), DatePickerFragment.Call
       if (resolvedActivity == null) isEnabled = false
     }
 
-//    callSuspectButton.apply {
-//      val callContactIntent = Intent(Intent.ACTION_DIAL, ContactsContract.CommonDataKinds.Phone)
-//    }
+    callSuspectButton.setOnClickListener {
+      val intent = Intent(Intent.ACTION_PICK)
+      intent.type = ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE
+      startActivityForResult(intent, 1)
+    }
   }
 
   override fun onStop() {
@@ -185,16 +188,32 @@ class CrimeFragment : Fragment(R.layout.fragment_crime), DatePickerFragment.Call
     when {
       resultCode != Activity.RESULT_OK -> return
       resultCode == REQUEST_CONTACT && data != null -> {
+
         val contactUri: Uri? = data.data
-        val queryFields = arrayOf(ContactsContract.Contacts.DISPLAY_NAME)
-        val cursor = requireActivity().contentResolver.query(contactUri!!, queryFields, null, null, null)
+        val queryFields = arrayOf(
+          ContactsContract.CommonDataKinds.Phone.NUMBER,
+          ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME
+        )
+        val cursor = requireActivity().contentResolver.query(
+          contactUri!!, queryFields, null, null, null
+        )
         cursor?.use {
-          if (it.count == 0) return
           it.moveToFirst()
-          val suspect = it.getString(0)
-          crime.suspect = suspect
+          var numberColumn = it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+          var nameColumn = it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
+          var number = it.getString(numberColumn)
+          var name = it.getString(nameColumn)
+
+          crime.suspect = name
           crimeDeatilViewModel.saveCrime(crime)
-          suspectButton.text = suspect
+          suspectButton.text = name
+          Toast.makeText(context, "$name: $number", Toast.LENGTH_SHORT).show()
+
+          callSuspectButton.apply {
+            val dialIntent = Intent(Intent.ACTION_DIAL)
+            dialIntent.data = Uri.parse("tel:$number")
+            startActivity(dialIntent)
+          }
         }
       }
     }
