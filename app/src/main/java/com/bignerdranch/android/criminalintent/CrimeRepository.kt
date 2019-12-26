@@ -3,9 +3,11 @@ package com.bignerdranch.android.criminalintent
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.room.Room
+import com.bignerdranch.android.criminalintent.CriminalIntentApplication.Companion.context
 import com.bignerdranch.android.criminalintent.database.CrimeDatabase
 import com.bignerdranch.android.criminalintent.database.migration_1_2
 import com.bignerdranch.android.criminalintent.models.Crime
+import java.io.File
 import java.util.UUID
 import java.util.concurrent.Executors
 
@@ -31,6 +33,7 @@ class CrimeRepository private constructor() {
 
   private val crimeDao = database.crimeDao()
   private val executor = Executors.newSingleThreadExecutor()
+  private val filesDir = context.applicationContext.filesDir
 
   fun getCrimes(): LiveData<List<Crime>> = crimeDao.getCrimes()
 
@@ -45,4 +48,6 @@ class CrimeRepository private constructor() {
     executor.execute {
       crimeDao.addCrime(crime)
     }
+
+  fun getPhotoFile(crime: Crime): File = File(filesDir, crime.photoFileName)
 }
