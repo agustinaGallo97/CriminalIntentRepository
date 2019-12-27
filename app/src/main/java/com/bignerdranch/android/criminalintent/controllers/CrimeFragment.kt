@@ -85,7 +85,7 @@ class CrimeFragment : Fragment(R.layout.fragment_crime), DatePickerFragment.Call
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-    setUpVars(view)
+    CrimeFragmentHelper().setUpVars(view)
 
     crimeDeatilViewModel.crimeLiveData.observe(viewLifecycleOwner) { crime ->
       crime?.let {
@@ -94,20 +94,9 @@ class CrimeFragment : Fragment(R.layout.fragment_crime), DatePickerFragment.Call
         photoUri = FileProvider.getUriForFile(
           requireActivity(), "com.bignerdranch.android.criminalintent.fileprovider", photoFile
         )
-        updateUI()
+        CrimeFragmentHelper().updateUI()
       }
     }
-  }
-
-  private fun setUpVars(view: View) {
-    titleField = view.findViewById(R.id.crimeTitle) as EditText
-    dateButton = view.findViewById(R.id.crimeDate) as Button
-    timeButton = view.findViewById(R.id.crimeTime) as Button
-    solvedCheckBox = view.findViewById(R.id.crimeSolved) as CheckBox
-    reportButton = view.findViewById(R.id.crimeReport) as Button
-    suspectButton = view.findViewById(R.id.crimeSuspect) as Button
-    photoButton = view.findViewById(R.id.crimeCamera) as ImageButton
-    photoView = view.findViewById(R.id.crimePhoto) as ImageView
   }
 
   override fun onStart() {
@@ -125,24 +114,16 @@ class CrimeFragment : Fragment(R.layout.fragment_crime), DatePickerFragment.Call
       setOnCheckedChangeListener { _, isChecked -> crime.isSolved = isChecked }
     }
 
-    dateButton.setOnClickListener {
-      DatePickerFragment.newInstance(crime.date).apply {
-        setTargetFragment(this@CrimeFragment, REQUEST_DATE)
-        show(this@CrimeFragment.requireFragmentManager(), DIALOG_DATE)
-      }
-    }
+    buttonsListener()
+  }
 
-    timeButton.setOnClickListener {
-      TimePickerFragment.newInstance(crime.date).apply {
-        setTargetFragment(this@CrimeFragment, REQUEST_TIME)
-        show(this@CrimeFragment.requireFragmentManager(), DIALOG_TIME)
-      }
-    }
+  private fun buttonsListener() {
+    CrimeFragmentHelper().pickerButtons()
 
     reportButton.setOnClickListener {
       Intent(Intent.ACTION_SEND).apply {
         type = TYPE_INTENT
-        putExtra(Intent.EXTRA_TEXT, getCrimeReport())
+        putExtra(Intent.EXTRA_TEXT, CrimeFragmentHelper().getCrimeReport())
         putExtra(Intent.EXTRA_SUBJECT, getString(R.string.crime_report_subject))
       }.also { intent ->
         val chooserIntent = Intent.createChooser(intent, getString(R.string.send_report))
@@ -160,46 +141,7 @@ class CrimeFragment : Fragment(R.layout.fragment_crime), DatePickerFragment.Call
       if (resolvedActivity == null) isEnabled = false
     }
 
-    photoButton.apply {
-      val packageManager: PackageManager = requireActivity().packageManager
-      val captureImage = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-      val resolvedActivity: ResolveInfo? =
-        packageManager.resolveActivity(captureImage, PackageManager.MATCH_DEFAULT_ONLY)
-      if (resolvedActivity == null) isEnabled = false
-
-      setOnClickListener {
-        captureImage.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
-        val cameraActivities: List<ResolveInfo> =
-          packageManager.queryIntentActivities(captureImage, PackageManager.MATCH_DEFAULT_ONLY)
-        for (cameraActivity in cameraActivities) {
-          requireActivity().grantUriPermission(
-            cameraActivity.activityInfo.packageName,
-            photoUri,
-            Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-          )
-        }
-        startActivityForResult(captureImage, REQUEST_PHOTO)
-      }
-    }
-
-    photoView.setOnClickListener {
-      val builder = Dialog(context!!)
-      builder.requestWindowFeature(Window.FEATURE_NO_TITLE)
-      builder.window!!.setBackgroundDrawable(
-        ColorDrawable(Color.TRANSPARENT)
-      )
-      builder.setOnDismissListener {}
-
-      val imageView = ImageView(context)
-      imageView.setImageURI(photoUri)
-      builder.addContentView(
-        imageView, RelativeLayout.LayoutParams(
-          ViewGroup.LayoutParams.MATCH_PARENT,
-          ViewGroup.LayoutParams.MATCH_PARENT
-        )
-      )
-      builder.show()
-    }
+    CrimeFragmentHelper().photoButton()
   }
 
   override fun onStop() {
@@ -214,45 +156,12 @@ class CrimeFragment : Fragment(R.layout.fragment_crime), DatePickerFragment.Call
 
   override fun onDateSelected(date: Date) {
     crime.date = date
-    updateUI()
+    CrimeFragmentHelper().updateUI()
   }
 
   override fun onTimeSelected(dateTime: Date) {
     crime.date.time = dateTime.time
-    updateUI()
-  }
-
-  private fun updateUI() {
-    titleField.setText(crime.title)
-    dateButton.text = dateFormatter.format(crime.date)
-    timeButton.text = timeFormatter.format(crime.date)
-    solvedCheckBox.apply {
-      isChecked = crime.isSolved
-      jumpDrawablesToCurrentState()
-    }
-    if (crime.suspect.isNotEmpty()) {
-      suspectButton.text = crime.suspect
-    }
-    updatePhotoView()
-  }
-
-  private fun updatePhotoView() {
-    if (photoFile.exists()) {
-      val bitmap = getScaledBitmap(photoFile.path, requireActivity())
-      photoView.setImageBitmap(bitmap)
-    } else {
-      photoView.setImageDrawable(null)
-    }
-  }
-
-  private fun getCrimeReport(): String {
-    val solvedString =
-      if (crime.isSolved) getString(R.string.crime_report_solved) else getString(R.string.crime_report_unsolved)
-    val dateString = DateFormat.format(DATE_FORMAT_REPORT, crime.date).toString()
-    var suspect = if (crime.suspect.isBlank()) getString(R.string.crime_report_no_suspect) else getString(
-      R.string.crime_report_suspect, crime.suspect
-    )
-    return getString(R.string.crime_report, crime.title, dateString, solvedString, suspect)
+    CrimeFragmentHelper().updateUI()
   }
 
   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -287,7 +196,112 @@ class CrimeFragment : Fragment(R.layout.fragment_crime), DatePickerFragment.Call
       }
       resultCode == REQUEST_PHOTO -> {
         requireActivity().revokeUriPermission(photoUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-        updatePhotoView()
+        CrimeFragmentHelper().updatePhotoView()
+      }
+    }
+  }
+
+  inner class CrimeFragmentHelper {
+    fun setUpVars(view: View) {
+      titleField = view.findViewById(R.id.crimeTitle) as EditText
+      dateButton = view.findViewById(R.id.crimeDate) as Button
+      timeButton = view.findViewById(R.id.crimeTime) as Button
+      solvedCheckBox = view.findViewById(R.id.crimeSolved) as CheckBox
+      reportButton = view.findViewById(R.id.crimeReport) as Button
+      suspectButton = view.findViewById(R.id.crimeSuspect) as Button
+      photoButton = view.findViewById(R.id.crimeCamera) as ImageButton
+      photoView = view.findViewById(R.id.crimePhoto) as ImageView
+    }
+
+    fun updateUI() {
+      titleField.setText(crime.title)
+      dateButton.text = dateFormatter.format(crime.date)
+      timeButton.text = timeFormatter.format(crime.date)
+      solvedCheckBox.apply {
+        isChecked = crime.isSolved
+        jumpDrawablesToCurrentState()
+      }
+      if (crime.suspect.isNotEmpty()) {
+        suspectButton.text = crime.suspect
+      }
+      updatePhotoView()
+    }
+
+    fun updatePhotoView() {
+      if (photoFile.exists()) {
+        val bitmap = getScaledBitmap(photoFile.path, requireActivity())
+        photoView.setImageBitmap(bitmap)
+      } else {
+        photoView.setImageDrawable(null)
+      }
+    }
+
+    fun getCrimeReport(): String {
+      val solvedString =
+        if (crime.isSolved) getString(R.string.crime_report_solved) else getString(R.string.crime_report_unsolved)
+      val dateString = DateFormat.format(DATE_FORMAT_REPORT, crime.date).toString()
+      var suspect = if (crime.suspect.isBlank()) getString(R.string.crime_report_no_suspect) else getString(
+        R.string.crime_report_suspect, crime.suspect
+      )
+      return getString(R.string.crime_report, crime.title, dateString, solvedString, suspect)
+    }
+
+    fun photoButton() {
+      photoButton.apply {
+        val packageManager: PackageManager = requireActivity().packageManager
+        val captureImage = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        val resolvedActivity: ResolveInfo? =
+          packageManager.resolveActivity(captureImage, PackageManager.MATCH_DEFAULT_ONLY)
+        if (resolvedActivity == null) isEnabled = false
+
+        setOnClickListener {
+          captureImage.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
+          val cameraActivities: List<ResolveInfo> =
+            packageManager.queryIntentActivities(captureImage, PackageManager.MATCH_DEFAULT_ONLY)
+          for (cameraActivity in cameraActivities) {
+            requireActivity().grantUriPermission(
+              cameraActivity.activityInfo.packageName,
+              photoUri,
+              Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+            )
+          }
+          startActivityForResult(captureImage, REQUEST_PHOTO)
+        }
+      }
+
+      photoView.setOnClickListener {
+        val builder = Dialog(context!!)
+        builder.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        builder.window!!.setBackgroundDrawable(
+          ColorDrawable(Color.TRANSPARENT)
+        )
+        builder.setOnDismissListener {}
+
+        val imageView = ImageView(context)
+        imageView.setImageURI(photoUri)
+        builder.addContentView(
+          imageView, RelativeLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+          )
+        )
+        builder.show()
+      }
+    }
+
+    fun pickerButtons() {
+      dateButton.setOnClickListener {
+        DatePickerFragment.newInstance(crime.date).apply {
+          setTargetFragment(this@CrimeFragment, REQUEST_DATE)
+          show(this@CrimeFragment.requireFragmentManager(), DIALOG_DATE)
+        }
+      }
+
+      timeButton.setOnClickListener {
+        TimePickerFragment.newInstance(crime.date).apply {
+          setTargetFragment(this@CrimeFragment, REQUEST_TIME)
+          show(this@CrimeFragment.requireFragmentManager(), DIALOG_TIME)
+        }
       }
     }
   }
