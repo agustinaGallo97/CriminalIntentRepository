@@ -1,9 +1,12 @@
 package com.bignerdranch.android.criminalintent.controllers
 
 import android.app.Activity
+import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.ContactsContract
@@ -19,8 +22,11 @@ import com.bignerdranch.android.criminalintent.models.Crime
 import com.bignerdranch.android.criminalintent.models.CrimeDetailViewModel
 import com.bignerdranch.android.criminalintent.views.utils.BaseTextWatcher
 import android.text.format.DateFormat
+import android.view.ViewGroup
+import android.view.Window
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.RelativeLayout
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.UUID
@@ -174,6 +180,25 @@ class CrimeFragment : Fragment(R.layout.fragment_crime), DatePickerFragment.Call
         }
         startActivityForResult(captureImage, REQUEST_PHOTO)
       }
+    }
+
+    photoView.setOnClickListener {
+      val builder = Dialog(context!!)
+      builder.requestWindowFeature(Window.FEATURE_NO_TITLE)
+      builder.window!!.setBackgroundDrawable(
+        ColorDrawable(Color.TRANSPARENT)
+      )
+      builder.setOnDismissListener {}
+
+      val imageView = ImageView(context)
+      imageView.setImageURI(photoUri)
+      builder.addContentView(
+        imageView, RelativeLayout.LayoutParams(
+          ViewGroup.LayoutParams.MATCH_PARENT,
+          ViewGroup.LayoutParams.MATCH_PARENT
+        )
+      )
+      builder.show()
     }
   }
 
