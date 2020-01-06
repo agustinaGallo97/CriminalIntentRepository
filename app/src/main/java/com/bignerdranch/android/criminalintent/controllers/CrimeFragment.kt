@@ -101,16 +101,6 @@ class CrimeFragment : Fragment(R.layout.fragment_crime), DatePickerFragment.Call
     }
   }
 
-  private fun setUpVars(view: View) {
-    titleField = view.findViewById(R.id.crimeTitle) as EditText
-    dateButton = view.findViewById(R.id.crimeDate) as Button
-    timeButton = view.findViewById(R.id.crimeTime) as Button
-    solvedCheckBox = view.findViewById(R.id.crimeSolved) as CheckBox
-    reportButton = view.findViewById(R.id.crimeReport) as Button
-    suspectButton = view.findViewById(R.id.crimeSuspect) as Button
-    callSuspectButton = view.findViewById(R.id.callSuspect) as Button
-  }
-
   override fun onStart() {
     super.onStart()
 
@@ -189,7 +179,6 @@ class CrimeFragment : Fragment(R.layout.fragment_crime), DatePickerFragment.Call
 
   private fun onContactInformationReceived(contactUri: Uri) {
     val (suspectName, phoneNumber) = PhoneContactHelper.getContactNameAndPhoneNumber(contactUri)
-
     crime = crime.copy(suspectName = suspectName)
     crimeDeatilViewModel.saveCrime(crime)
     suspectButton.text = suspectName
@@ -298,53 +287,8 @@ class CrimeFragment : Fragment(R.layout.fragment_crime), DatePickerFragment.Call
         show(this@CrimeFragment.requireFragmentManager(), DIALOG_TIME)
       }
     }
-    if (crime.suspect.isNotEmpty()) {
-      suspectButton.text = crime.suspect
-    }
-  }
-
-  private fun getCrimeReport(): String {
-    val solvedString =
-      if (crime.isSolved) getString(R.string.crime_report_solved) else getString(R.string.crime_report_unsolved)
-    val dateString = DateFormat.format(DATE_FORMAT_REPORT, crime.date).toString()
-    var suspect = if (crime.suspect.isBlank()) getString(R.string.crime_report_no_suspect) else getString(
-      R.string.crime_report_suspect, crime.suspect
-    )
-    return getString(R.string.crime_report, crime.title, dateString, solvedString, suspect)
-  }
-
-  override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-    when {
-      resultCode != Activity.RESULT_OK -> return
-      resultCode == REQUEST_CONTACT && data != null -> {
-
-        val contactUri: Uri? = data.data
-        val queryFields = arrayOf(
-          ContactsContract.CommonDataKinds.Phone.NUMBER,
-          ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME
-        )
-        val cursor = requireActivity().contentResolver.query(
-          contactUri!!, queryFields, null, null, null
-        )
-        cursor?.use {
-          it.moveToFirst()
-          var numberColumn = it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
-          var nameColumn = it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
-          var number = it.getString(numberColumn)
-          var name = it.getString(nameColumn)
-
-          crime.suspect = name
-          crimeDeatilViewModel.saveCrime(crime)
-          suspectButton.text = name
-          Toast.makeText(context, "$name: $number", Toast.LENGTH_SHORT).show()
-
-          callSuspectButton.apply {
-            val dialIntent = Intent(Intent.ACTION_DIAL)
-            dialIntent.data = Uri.parse("tel:$number")
-            startActivity(dialIntent)
-          }
-        }
-      }
+    if (crime.suspectName.isNotEmpty()) {
+      suspectButton.text = crime.suspectName
     }
   }
 }
